@@ -29,10 +29,20 @@ namespace TimeKeeper
             services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 
             services.AddControllers();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                          p => p.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod());
+            });
         }
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseCors("AllowAll");
+
             app.UseRouting();
 
             app.UseDeveloperExceptionPage();

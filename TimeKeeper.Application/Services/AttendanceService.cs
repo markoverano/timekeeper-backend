@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TimeKeeper.Core.DTO;
+using TimeKeeper.Core.Entities;
 using TimeKeeper.Core.Interface.Repositories;
 using TimeKeeper.Core.Interface.Services;
 
@@ -18,29 +19,80 @@ namespace TimeKeeper.Application.Services
             _attendanceRepository = attendanceRepository;
         }
 
-        public Task CreateAttendanceAsync(AttendanceEntryDto attendanceDto)
+        public async Task<List<AttendanceEntryDto>> GetAllAttendancesAsync()
         {
-            throw new NotImplementedException();
+            var attendances = await _attendanceRepository.GetAllEntriesAsync();
+            return MapAttendancesToDTOs(attendances.ToList());
         }
 
-        public Task DeleteAttendanceAsync(int id)
+        public async Task<AttendanceEntryDto> GetAttendanceByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var attendance = await _attendanceRepository.GetEntryByIdAsync(id);
+            return MapAttendanceToDTO(attendance);
         }
 
-        public Task<List<AttendanceEntryDto>> GetAllAttendancesAsync()
+        public async Task CreateAttendanceAsync(AttendanceEntryDto attendanceDto)
         {
-            throw new NotImplementedException();
+            var attendance = MapDTOToAttendance(attendanceDto);
+            await _attendanceRepository.AddEntryAsync(attendance);
         }
 
-        public Task<AttendanceEntryDto> GetAttendanceByIdAsync(int id)
+        public async Task UpdateAttendanceAsync(int id, AttendanceEntryDto attendanceDto)
         {
-            throw new NotImplementedException();
+            var existingAttendance = await _attendanceRepository.GetEntryByIdAsync(id);
+            if (existingAttendance == null)
+            {
+                return;
+            }
+
+            existingAttendance.Date = attendanceDto.Date;
+            existingAttendance.TimeIn = attendanceDto.TimeIn;
+            existingAttendance.TimeOut = attendanceDto.TimeOut;
+
+            await _attendanceRepository.UpdateEntryAsync(existingAttendance);
         }
 
-        public Task UpdateAttendanceAsync(int id, AttendanceEntryDto attendanceDto)
+        public async Task DeleteAttendanceAsync(int id)
         {
-            throw new NotImplementedException();
+            var attendance = await _attendanceRepository.GetEntryByIdAsync(id);
+            if (attendance == null)
+            {
+                return;
+            }
+
+            await _attendanceRepository.DeleteEntryAsync(id);
+        }
+
+        private AttendanceEntryDto MapAttendanceToDTO(AttendanceEntry attendance)
+        {
+            return new AttendanceEntryDto
+            {
+                Id = attendance.Id,
+                Date = attendance.Date,
+                TimeIn = attendance.TimeIn,
+                TimeOut = attendance.TimeOut
+            };
+        }
+
+        private List<AttendanceEntryDto> MapAttendancesToDTOs(List<AttendanceEntry> attendances)
+        {
+            var attendanceDTOs = new List<AttendanceEntryDto>();
+            foreach (var attendance in attendances)
+            {
+                attendanceDTOs.Add(MapAttendanceToDTO(attendance));
+            }
+            return attendanceDTOs;
+        }
+
+        private AttendanceEntry MapDTOToAttendance(AttendanceEntryDto attendanceDto)
+        {
+            return new AttendanceEntry
+            {
+                Id = attendanceDto.Id,
+                Date = attendanceDto.Date,
+                TimeIn = attendanceDto.TimeIn,
+                TimeOut = attendanceDto.TimeOut
+            };
         }
     }
 }

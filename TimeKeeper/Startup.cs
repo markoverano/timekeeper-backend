@@ -1,5 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Text.Json;
+using TimeKeeper.Application.Services;
+using TimeKeeper.Core.Interface.Repositories;
+using TimeKeeper.Core.Interface.Services;
 using TimeKeeper.Infrastructure.Data;
+using TimeKeeper.Infrastructure.Repositories;
 
 namespace TimeKeeper
 {
@@ -14,8 +21,12 @@ namespace TimeKeeper
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddSwaggerGen();
+
+            services.AddScoped<IAttendanceService, AttendanceService>();
+            services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 
             services.AddControllers();
         }
@@ -23,6 +34,10 @@ namespace TimeKeeper
         public void Configure(IApplicationBuilder app)
         {
             app.UseRouting();
+
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TimeKeeper API"));
 
             app.UseEndpoints(endpoints =>
             {

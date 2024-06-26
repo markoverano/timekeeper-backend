@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
@@ -76,3 +76,7 @@ TimeKeeper.Infrastructure/obj/TimeKeeper.Infrastructure.csproj.nuget.g.props
 TimeKeeper.Infrastructure/obj/Debug/net6.0/TimeKeeper.Infrastructure.AssemblyInfo.cs
 TimeKeeper.Infrastructure/obj/Debug/net6.0/TimeKeeper.Infrastructure.AssemblyInfoInputs.cache
 TimeKeeper.Infrastructure/obj/Debug/net6.0/TimeKeeper.Infrastructure.assets.cache
+TimeKeeper.Application/obj/
+TimeKeeper.Application/bin/
+TimeKeeper/bin/
+TimeKeeper/obj/

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TimeKeeper.Core.Interface
+namespace TimeKeeper.Core.Interface.Repositories
 {
     public interface IAttendanceRepository
     {

@@ -1,21 +1,14 @@
-using Microsoft.EntityFrameworkCore;
-using TimeKeeper.Infrastructure.Data;
+using Microsoft.AspNetCore;
+using TimeKeeper;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllers();
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+public class Program
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    public static void Main(string[] args)
+    {
+        CreateWebHostBuilder(args).Build().Run();
+    }
 
-
-var app = builder.Build();
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+    public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        WebHost.CreateDefaultBuilder(args)
+            .UseStartup<Startup>();
+}

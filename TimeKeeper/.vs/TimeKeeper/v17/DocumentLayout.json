@@ -1,0 +1,68 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\CODEZ\\some projects\\timekeeper-backend\\TimeKeeper\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{18F22D3D-B6BB-4266-8804-DBFC3FABE611}|..\\TimeKeeper.Infrastructure\\TimeKeeper.Infrastructure.csproj|d:\\codez\\some projects\\timekeeper-backend\\timekeeper.infrastructure\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B38AE052-BC1C-4A8C-B671-046FF774AB2E}|..\\TimeKeeper.Core\\TimeKeeper.Core.csproj|d:\\codez\\some projects\\timekeeper-backend\\timekeeper.core\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:132:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Class1.cs",
+              "DocumentMoniker": "D:\\CODEZ\\some projects\\timekeeper-backend\\TimeKeeper.Infrastructure\\Class1.cs",
+              "RelativeDocumentMoniker": "..\\TimeKeeper.Infrastructure\\Class1.cs",
+              "ToolTip": "D:\\CODEZ\\some projects\\timekeeper-backend\\TimeKeeper.Infrastructure\\Class1.cs",
+              "RelativeToolTip": "..\\TimeKeeper.Infrastructure\\Class1.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T03:48:18.533Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Class1.cs",
+              "DocumentMoniker": "D:\\CODEZ\\some projects\\timekeeper-backend\\TimeKeeper.Core\\Class1.cs",
+              "RelativeDocumentMoniker": "..\\TimeKeeper.Core\\Class1.cs",
+              "ToolTip": "D:\\CODEZ\\some projects\\timekeeper-backend\\TimeKeeper.Core\\Class1.cs",
+              "RelativeToolTip": "..\\TimeKeeper.Core\\Class1.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T03:45:20.275Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -31,10 +31,30 @@ namespace TimeKeeper.Application.Services
             return MapAttendanceToDTO(attendance);
         }
 
-        public async Task CreateAttendanceAsync(AttendanceEntryDto attendanceDto)
+        public async Task CreateAttendanceAsync(int employeeId)
         {
-            var attendance = MapDTOToAttendance(attendanceDto);
-            await _attendanceRepository.AddEntryAsync(attendance);
+            //todo create catch for duplicate timein entry
+
+            //var today = DateTime.Today;
+
+            //var existingEntry = await _context.AttendanceEntries
+            //    .FirstOrDefaultAsync(e => e.UserId == userId && e.Date == today && e.TimeOut == null);
+
+            //if (existingEntry != null)
+            //{
+            //    throw Exception("Time-in entry already exists for today.");
+            //}
+
+            var attendanceEntry = new AttendanceEntryDto
+            {
+                EmployeeId = employeeId,
+                TimeIn = DateTime.UtcNow,
+                Date = DateTime.UtcNow
+            };
+
+            var mapped = MapDTOToAttendance(attendanceEntry);
+
+            await _attendanceRepository.AddEntryAsync(mapped);
         }
 
         public async Task UpdateAttendanceAsync(int id, AttendanceEntryDto attendanceDto)
@@ -45,11 +65,23 @@ namespace TimeKeeper.Application.Services
                 return;
             }
 
-            existingAttendance.Date = attendanceDto.Date;
-            existingAttendance.TimeIn = attendanceDto.TimeIn;
-            existingAttendance.TimeOut = attendanceDto.TimeOut;
+            existingAttendance.TimeIn = UpdateTimeComponent(existingAttendance.TimeIn, attendanceDto.TimeInString);
+            existingAttendance.TimeOut = UpdateTimeComponent(existingAttendance.TimeOut, attendanceDto.TimeOutString);
 
             await _attendanceRepository.UpdateEntryAsync(existingAttendance);
+        }
+
+        private DateTime? UpdateTimeComponent(DateTime? originalDateTime, string timeString)
+        {
+            if (originalDateTime.HasValue && DateTime.TryParse(timeString, out DateTime parsedTime))
+            {
+                return new DateTime(originalDateTime.Value.Year, 
+                                    originalDateTime.Value.Month, 
+                                    originalDateTime.Value.Day,
+                                    parsedTime.Hour, parsedTime.Minute, 
+                                    parsedTime.Second);
+            }
+            return originalDateTime;
         }
 
         public async Task DeleteAttendanceAsync(int id)
@@ -89,6 +121,7 @@ namespace TimeKeeper.Application.Services
             return new AttendanceEntry
             {
                 Id = attendanceDto.Id,
+                EmployeeId = attendanceDto.EmployeeId,
                 Date = attendanceDto.Date,
                 TimeIn = attendanceDto.TimeIn,
                 TimeOut = attendanceDto.TimeOut

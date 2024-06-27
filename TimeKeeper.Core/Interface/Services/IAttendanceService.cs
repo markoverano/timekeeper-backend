@@ -11,7 +11,7 @@ namespace TimeKeeper.Core.Interface.Services
     {
         Task<List<AttendanceEntryDto>> GetAllAttendancesAsync();
         Task<AttendanceEntryDto> GetAttendanceByIdAsync(int id);
-        Task CreateAttendanceAsync(AttendanceEntryDto attendanceDto);
+        Task CreateAttendanceAsync(int employeeId);
         Task UpdateAttendanceAsync(int id, AttendanceEntryDto attendanceDto);
         Task DeleteAttendanceAsync(int id);
     }

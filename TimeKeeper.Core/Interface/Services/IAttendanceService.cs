@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TimeKeeper.Core.DTO;
+﻿using TimeKeeper.Core.DTO;
 
 namespace TimeKeeper.Core.Interface.Services
 {
@@ -14,5 +9,6 @@ namespace TimeKeeper.Core.Interface.Services
         Task CreateAttendanceAsync(int employeeId);
         Task UpdateAttendanceAsync(int id, AttendanceEntryDto attendanceDto);
         Task DeleteAttendanceAsync(int id);
+        Task<List<AttendanceEntryDto>> GetEntriesByEmployeeIdAsync(int employeeId);
     }
 }

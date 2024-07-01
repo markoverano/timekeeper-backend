@@ -1,4 +1,5 @@
-﻿using TimeKeeper.Core.DTO;
+﻿using AutoMapper;
+using TimeKeeper.Core.DTO;
 using TimeKeeper.Core.Entities;
 using TimeKeeper.Core.Interface.Repositories;
 using TimeKeeper.Core.Interface.Services;
@@ -8,22 +9,30 @@ namespace TimeKeeper.Application.Services
     public class AttendanceService : IAttendanceService
     {
         private readonly IAttendanceRepository _attendanceRepository;
+        private readonly IMapper _mapper;
 
-        public AttendanceService(IAttendanceRepository attendanceRepository)
+        public AttendanceService(IAttendanceRepository attendanceRepository, IMapper mapper)
         {
             _attendanceRepository = attendanceRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<AttendanceEntryDto>> GetAllAttendancesAsync()
         {
             var attendances = await _attendanceRepository.GetAllEntriesAsync();
-            return MapAttendancesToDTOs(attendances.ToList());
+            return _mapper.Map<List<AttendanceEntryDto>>(attendances);
         }
 
         public async Task<AttendanceEntryDto> GetAttendanceByIdAsync(int id)
         {
             var attendance = await _attendanceRepository.GetEntryByIdAsync(id);
-            return MapAttendanceToDTO(attendance);
+            return _mapper.Map<AttendanceEntryDto>(attendance);
+        }
+
+        public async Task<List<AttendanceEntryDto>> GetEntriesByEmployeeIdAsync(int employeeId)
+        {
+            var attendanceList = await _attendanceRepository.GetAllEntriesByEmployeeAsync(employeeId);
+            return _mapper.Map<List<AttendanceEntryDto>>(attendanceList);
         }
 
         public async Task CreateAttendanceAsync(int employeeId)
@@ -51,12 +60,11 @@ namespace TimeKeeper.Application.Services
                     Date = today
                 };
 
-                var mapped = MapDTOToAttendance(attendanceEntry);
+                var mapped = _mapper.Map<AttendanceEntry>(attendanceEntry);
 
                 await _attendanceRepository.AddEntryAsync(mapped);
             }
         }
-
         public async Task UpdateAttendanceAsync(int id, AttendanceEntryDto attendanceDto)
         {
             var existingAttendance = await _attendanceRepository.GetEntryByIdAsync(id);
@@ -93,39 +101,6 @@ namespace TimeKeeper.Application.Services
             }
 
             await _attendanceRepository.DeleteEntryAsync(id);
-        }
-
-        private AttendanceEntryDto MapAttendanceToDTO(AttendanceEntry attendance)
-        {
-            return new AttendanceEntryDto
-            {
-                Id = attendance.Id,
-                Date = attendance.Date,
-                TimeIn = attendance.TimeIn,
-                TimeOut = attendance.TimeOut
-            };
-        }
-
-        private List<AttendanceEntryDto> MapAttendancesToDTOs(List<AttendanceEntry> attendances)
-        {
-            var attendanceDTOs = new List<AttendanceEntryDto>();
-            foreach (var attendance in attendances)
-            {
-                attendanceDTOs.Add(MapAttendanceToDTO(attendance));
-            }
-            return attendanceDTOs;
-        }
-
-        private AttendanceEntry MapDTOToAttendance(AttendanceEntryDto attendanceDto)
-        {
-            return new AttendanceEntry
-            {
-                Id = attendanceDto.Id,
-                EmployeeId = attendanceDto.EmployeeId,
-                Date = attendanceDto.Date,
-                TimeIn = attendanceDto.TimeIn,
-                TimeOut = attendanceDto.TimeOut
-            };
         }
     }
 }

@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TimeKeeper.Application.DtoMapper;
 using TimeKeeper.Application.Services;
 using TimeKeeper.Core.Entities;
 using TimeKeeper.Core.Interface.Repositories;
 using TimeKeeper.Core.Interface.Services;
 using TimeKeeper.Infrastructure.Data;
 using TimeKeeper.Infrastructure.Repositories;
+using TimeKeeper.MiddleWares;
 
 namespace TimeKeeper
 {
@@ -25,8 +27,9 @@ namespace TimeKeeper
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<UserDetail, IdentityRole>()
-                .AddDefaultTokenProviders();
+            services.AddIdentity<UserDetail, IdentityRole>().AddDefaultTokenProviders();
+
+            services.AddAutoMapper(typeof(AttendanceMapperProfile));
 
             services.AddAuthentication(options =>
             {
@@ -72,6 +75,8 @@ namespace TimeKeeper
             app.UseCors("AllowAll");
 
             app.UseRouting();
+
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseDeveloperExceptionPage();
             app.UseSwagger();

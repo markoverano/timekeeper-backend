@@ -33,6 +33,17 @@ namespace TimeKeeper.Controllers
             return Ok(attendance);
         }
 
+        [HttpGet("{employeeId}/entries")]
+        public async Task<ActionResult<List<AttendanceEntryDto>>> GetEntriesByEmployeeIdAsync(int employeeId)
+        {
+            var attendance = await _attendanceService.GetEntriesByEmployeeIdAsync(employeeId);
+            if (attendance == null)
+            {
+                return NotFound();
+            }
+            return Ok(attendance);
+        }
+
         [HttpPost("{employeeId}")]
         public async Task<IActionResult> CreateAttendance(int employeeId)
         {

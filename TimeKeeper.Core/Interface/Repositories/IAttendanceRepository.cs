@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TimeKeeper.Core.Entities;
 
 namespace TimeKeeper.Core.Interface.Repositories
 {
     public interface IAttendanceRepository
     {
-        Task<IEnumerable<Entities.AttendanceEntry>> GetAllEntriesAsync();
-        Task<Entities.AttendanceEntry> GetEntryByIdAsync(int id);
-        Task AddEntryAsync(Entities.AttendanceEntry entry);
-        Task UpdateEntryAsync(Entities.AttendanceEntry entry);
+        Task<List<AttendanceEntry>> GetAllEntriesAsync();
+        Task<AttendanceEntry?> GetEntryByIdAsync(int id);
+        Task AddEntryAsync(AttendanceEntry entry);
+        Task UpdateEntryAsync(AttendanceEntry entry);
         Task DeleteEntryAsync(int id);
+        Task<IEnumerable<AttendanceEntry>> GetAllEntriesByEmployeeAsync(int employeeId);
+        Task<AttendanceEntry?> GetEntryByDateAndEmployeeIdAsync(DateTime today, int employeeId);
     }
 }

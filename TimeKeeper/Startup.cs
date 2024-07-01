@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TimeKeeper.Application.Services;
+using TimeKeeper.Core.Entities;
 using TimeKeeper.Core.Interface.Repositories;
 using TimeKeeper.Core.Interface.Services;
 using TimeKeeper.Infrastructure.Data;
@@ -23,10 +25,36 @@ namespace TimeKeeper
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddIdentity<UserDetail, IdentityRole>()
+                .AddDefaultTokenProviders();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = _configuration["Jwt:Issuer"],
+                    ValidAudience = _configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
+                };
+            });
+
             services.AddSwaggerGen();
 
             services.AddScoped<IAttendanceService, AttendanceService>();
             services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IUserDetailsRepository, UserDetailsRepository>();
 
             services.AddControllers();
 

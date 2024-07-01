@@ -10,5 +10,7 @@ namespace TimeKeeper.Core.Entities
         public int RoleId { get; set; }
         public UserRole? Role { get; set; }
         public string ? PasswordHash { get; set; }
+        public ICollection<RolePermission>? RolePermissions { get; set; }
+        public string? Salt { get; set; }
     }
 }

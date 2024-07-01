@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TimeKeeper.Core.DTO;
+﻿using TimeKeeper.Core.DTO;
 using TimeKeeper.Core.Entities;
 using TimeKeeper.Core.Interface.Repositories;
 using TimeKeeper.Core.Interface.Services;
@@ -33,28 +28,33 @@ namespace TimeKeeper.Application.Services
 
         public async Task CreateAttendanceAsync(int employeeId)
         {
-            //todo create catch for duplicate timein entry
+            var today = DateTime.Today;
 
-            //var today = DateTime.Today;
+            var existingEntry = await _attendanceRepository.GetEntryByDateAndEmployeeIdAsync(today, employeeId);
 
-            //var existingEntry = await _context.AttendanceEntries
-            //    .FirstOrDefaultAsync(e => e.UserId == userId && e.Date == today && e.TimeOut == null);
-
-            //if (existingEntry != null)
-            //{
-            //    throw Exception("Time-in entry already exists for today.");
-            //}
-
-            var attendanceEntry = new AttendanceEntryDto
+            if (existingEntry != null && existingEntry.TimeOut == null)
             {
-                EmployeeId = employeeId,
-                TimeIn = DateTime.UtcNow,
-                Date = DateTime.UtcNow
-            };
+                throw new Exception("Time-in entry already exists for today.");
+            }
 
-            var mapped = MapDTOToAttendance(attendanceEntry);
+            if (existingEntry != null && existingEntry.TimeOut != null)
+            {
+                existingEntry.TimeIn = DateTime.UtcNow;
+                await _attendanceRepository.UpdateEntryAsync(existingEntry);
+            }
+            else
+            {
+                var attendanceEntry = new AttendanceEntryDto
+                {
+                    EmployeeId = employeeId,
+                    TimeIn = DateTime.UtcNow,
+                    Date = today
+                };
 
-            await _attendanceRepository.AddEntryAsync(mapped);
+                var mapped = MapDTOToAttendance(attendanceEntry);
+
+                await _attendanceRepository.AddEntryAsync(mapped);
+            }
         }
 
         public async Task UpdateAttendanceAsync(int id, AttendanceEntryDto attendanceDto)
@@ -75,10 +75,10 @@ namespace TimeKeeper.Application.Services
         {
             if (originalDateTime.HasValue && DateTime.TryParse(timeString, out DateTime parsedTime))
             {
-                return new DateTime(originalDateTime.Value.Year, 
-                                    originalDateTime.Value.Month, 
+                return new DateTime(originalDateTime.Value.Year,
+                                    originalDateTime.Value.Month,
                                     originalDateTime.Value.Day,
-                                    parsedTime.Hour, parsedTime.Minute, 
+                                    parsedTime.Hour, parsedTime.Minute,
                                     parsedTime.Second);
             }
             return originalDateTime;

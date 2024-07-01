@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TimeKeeper.Core.Entities;
+using static TimeKeeper.Infrastructure.Helpers.Utility;
 
 namespace TimeKeeper.Infrastructure.Data
 {
@@ -77,6 +78,23 @@ namespace TimeKeeper.Infrastructure.Data
             modelBuilder.Entity<RolePermission>().HasData(
               new RolePermission { RoleId = 1, PermissionId = 1 },
               new RolePermission { RoleId = 1, PermissionId = 2 }
+            );
+
+            PasswordHasher hasher = new PasswordHasher();
+            var (hashedPassword, salt) = hasher.HashPassword("admin123");
+
+            modelBuilder.Entity<UserDetail>().HasData(
+                new UserDetail
+                {
+                    UserId = Guid.NewGuid(),
+                    FirstName = "Admin",
+                    LastName = "User",
+                    Email = "admin@user.com",
+                    PhoneNumber = "1234567890",
+                    RoleId = 1,
+                    PasswordHash = hashedPassword,
+                    Salt = Convert.ToBase64String(salt)
+                }
             );
         }
     }

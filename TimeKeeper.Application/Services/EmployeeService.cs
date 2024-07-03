@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System.Security.Cryptography;
 using TimeKeeper.Core.DTO;
 using TimeKeeper.Core.Entities;
 using TimeKeeper.Core.Interface.Repositories;
 using TimeKeeper.Core.Interface.Services;
+using static TimeKeeper.Infrastructure.Helpers.Utility;
 
 namespace TimeKeeper.Application.Services
 {
@@ -23,6 +22,9 @@ namespace TimeKeeper.Application.Services
 
         public async Task CreateEmployeeAsync(EmployeeDto employeeDto, string password)
         {
+            PasswordHasher hasher = new PasswordHasher();
+            var (hashedPassword, salt) = hasher.HashPassword(password);
+
             var user = new UserDetail
             {
                 UserId = Guid.NewGuid(),
@@ -31,7 +33,8 @@ namespace TimeKeeper.Application.Services
                 Email = employeeDto.Email,
                 PhoneNumber = employeeDto.PhoneNumber,
                 RoleId = employeeDto.RoleId,
-                PasswordHash = HashPassword(password)
+                PasswordHash = hashedPassword,
+                Salt = Convert.ToBase64String(salt)
             };
 
             await _userDetailsRepository.AddUserAsync(user);
@@ -43,29 +46,16 @@ namespace TimeKeeper.Application.Services
 
             await _employeeRepository.AddEmployeeAsync(employee);
         }
+        public async Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync()
+        {
+            var employees = await _employeeRepository.GetAllEmployeesAsync();
+            return _mapper.Map<IEnumerable<EmployeeDto>>(employees);
+        }
 
         public async Task<EmployeeDto> GetEmployeeByIdAsync(int id)
         {
             var employee = await _employeeRepository.GetEmployeeByIdAsync(id);
             return _mapper.Map<EmployeeDto>(employee);
-        }
-
-        private string HashPassword(string password)
-        {
-            byte[] salt = new byte[128 / 8];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
-
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
-
-            return hashed;
         }
     }
 }

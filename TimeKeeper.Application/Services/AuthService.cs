@@ -25,7 +25,7 @@ namespace TimeKeeper.Application.Services
             _passwordHasher = new PasswordHasher();
         }
 
-        public async Task<LoginResponse> Authenticate(string email, string password)
+        public async Task<LoginResponse?> Authenticate(string? email, string? password)
         {
             var user = await _context.UserDetails
                 .Include(u => u.Role)
@@ -36,7 +36,10 @@ namespace TimeKeeper.Application.Services
             var salt = Convert.FromBase64String(user.Salt);
             var hashedInputPassword = _passwordHasher.HashPasswordWithSalt(password, salt);
 
-            if (hashedInputPassword != user.PasswordHash) return null;
+            if (!hashedInputPassword.Equals(user.PasswordHash))
+            {
+                return null;
+            }
 
             var employee = await _context.Employees.FirstOrDefaultAsync(e => e.UserId == user.UserId);
 
@@ -53,35 +56,28 @@ namespace TimeKeeper.Application.Services
                 UserId = user.UserId,
                 EmployeeId = employee?.Id ?? 0,
                 Permissions = rolePermissions.Select(rp => rp.Permission.Name).ToList(),
-                UserRole = user.Role.RoleName
+                UserRole = user?.Role?.RoleName
             };
         }
 
         private string GenerateJwtToken(UserDetail user)
         {
-            try
-            {
-                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-                var claims = new[]
-                {
+            var claims = new[]
+            {
                         new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                    };
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],
-                    audience: _configuration["Jwt:Audience"],
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpireMinutes"])),
-                    signingCredentials: credentials);
+                };
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpireMinutes"])),
+                signingCredentials: credentials);
 
-                return new JwtSecurityTokenHandler().WriteToken(token);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

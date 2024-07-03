@@ -48,7 +48,7 @@ namespace TimeKeeper.Application.Services
 
             if (existingEntry != null && existingEntry.TimeOut != null)
             {
-                existingEntry.TimeIn = DateTime.UtcNow;
+                existingEntry.TimeIn = DateTime.Now;
                 await _attendanceRepository.UpdateEntryAsync(existingEntry);
             }
             else
@@ -56,7 +56,7 @@ namespace TimeKeeper.Application.Services
                 var attendanceEntry = new AttendanceEntryDto
                 {
                     EmployeeId = employeeId,
-                    TimeIn = DateTime.UtcNow,
+                    TimeIn = DateTime.Now,
                     Date = today
                 };
 
@@ -73,13 +73,13 @@ namespace TimeKeeper.Application.Services
                 return;
             }
 
-            existingAttendance.TimeIn = UpdateTimeComponent(existingAttendance.TimeIn, attendanceDto.TimeInString);
-            existingAttendance.TimeOut = UpdateTimeComponent(existingAttendance.TimeOut, attendanceDto.TimeOutString);
+            existingAttendance.TimeIn = UpdateTimeComponent(existingAttendance.TimeIn ?? existingAttendance.Date, attendanceDto?.TimeInString);
+            existingAttendance.TimeOut = UpdateTimeComponent(existingAttendance.TimeOut ?? existingAttendance.Date, attendanceDto?.TimeOutString);
 
             await _attendanceRepository.UpdateEntryAsync(existingAttendance);
         }
 
-        private DateTime? UpdateTimeComponent(DateTime? originalDateTime, string timeString)
+        private DateTime? UpdateTimeComponent(DateTime? originalDateTime, string? timeString)
         {
             if (originalDateTime.HasValue && DateTime.TryParse(timeString, out DateTime parsedTime))
             {
@@ -92,15 +92,14 @@ namespace TimeKeeper.Application.Services
             return originalDateTime;
         }
 
-        public async Task DeleteAttendanceAsync(int id)
+        public async Task TimeoutAsync(int employeeId)
         {
-            var attendance = await _attendanceRepository.GetEntryByIdAsync(id);
-            if (attendance == null)
+            if (!await _attendanceRepository.HasTimeInEntryAsync(employeeId))
             {
-                return;
+                throw new InvalidOperationException("You have no TimeIn entry.");
             }
 
-            await _attendanceRepository.DeleteEntryAsync(id);
+            await _attendanceRepository.UpdateTimeOutAsync(employeeId, DateTime.Now);
         }
     }
 }

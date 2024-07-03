@@ -16,14 +16,14 @@ namespace TimeKeeper.Infrastructure.Repositories
 
         public async Task<List<AttendanceEntry>> GetAllEntriesAsync()
         {
-            return await _context.AttendanceEntries.AsNoTracking().ToListAsync();
+            return await _context.AttendanceEntries.AsNoTracking().OrderByDescending(x=>x.Date).ToListAsync();
         }
 
         public async Task<IEnumerable<AttendanceEntry>> GetAllEntriesByEmployeeAsync(int employeeId)
         {
             return await _context.AttendanceEntries
                 .Where(x => x.EmployeeId == employeeId)
-                .AsNoTracking()
+                .AsNoTracking().OrderByDescending(x=>x.Date)
                 .ToListAsync();
         }
 
@@ -31,6 +31,7 @@ namespace TimeKeeper.Infrastructure.Repositories
         {
             return await _context.AttendanceEntries.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
+
         public async Task AddEntryAsync(AttendanceEntry entry)
         {
             await _context.AttendanceEntries.AddAsync(entry);
@@ -39,34 +40,40 @@ namespace TimeKeeper.Infrastructure.Repositories
 
         public async Task UpdateEntryAsync(AttendanceEntry entry)
         {
-            var employeeAttendance = await _context.AttendanceEntries
-                                    .OrderByDescending(x => x.TimeIn)
-                                    .FirstOrDefaultAsync(x => x.EmployeeId == entry.EmployeeId);
-
-            if (employeeAttendance != null && employeeAttendance.TimeIn == null)
-            {
-                throw new Exception("You have no time in record for today.");
-            }
-
             _context.AttendanceEntries.Update(entry);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteEntryAsync(int id)
-        {
-            var entry = await _context.AttendanceEntries.FindAsync(id);
-            if (entry != null)
-            {
-                _context.AttendanceEntries.Remove(entry);
-                await _context.SaveChangesAsync();
-            }
         }
 
         public async Task<AttendanceEntry?> GetEntryByDateAndEmployeeIdAsync(DateTime today, int employeeId)
         {
             return await _context.AttendanceEntries
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.EmployeeId == employeeId && x.Date == today);
+                .FirstOrDefaultAsync(x => x.EmployeeId == employeeId && x.Date == today.Date);
+        }
+
+        public async Task<bool> HasTimeInEntryAsync(int employeeId)
+        {
+            return await _context.AttendanceEntries
+                .AnyAsync(a => a.EmployeeId == employeeId &&
+                a.Date == DateTime.Today &&
+                a.TimeIn != null &&
+                a.TimeOut == null);
+        }
+
+        public async Task UpdateTimeOutAsync(int employeeId, DateTime timeOut)
+        {
+            var entry = await _context.AttendanceEntries
+                .FirstOrDefaultAsync(
+                    a => a.EmployeeId == employeeId && 
+                    a.Date == timeOut.Date && 
+                    a.TimeIn != null && 
+                    a.TimeOut == null);
+
+            if (entry != null)
+            {
+                entry.TimeOut = timeOut;
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

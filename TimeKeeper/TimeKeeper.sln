@@ -9,7 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeKeeper.Core", "..\TimeK
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeKeeper.Infrastructure", "..\TimeKeeper.Infrastructure\TimeKeeper.Infrastructure.csproj", "{18F22D3D-B6BB-4266-8804-DBFC3FABE611}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeKeeper.Application", "..\TimeKeeper.Application\TimeKeeper.Application.csproj", "{3CDEE090-734C-4643-8176-846003ED6456}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeKeeper.Application", "..\TimeKeeper.Application\TimeKeeper.Application.csproj", "{3CDEE090-734C-4643-8176-846003ED6456}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E3AE196D-9785-45C6-9846-E236B6D98DBA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Tests", "..\tests\Application\Application.Tests.csproj", "{07BB2FD6-7AD9-4D72-A346-E8D5A621AE48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +37,16 @@ Global
 		{3CDEE090-734C-4643-8176-846003ED6456}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CDEE090-734C-4643-8176-846003ED6456}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CDEE090-734C-4643-8176-846003ED6456}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07BB2FD6-7AD9-4D72-A346-E8D5A621AE48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07BB2FD6-7AD9-4D72-A346-E8D5A621AE48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07BB2FD6-7AD9-4D72-A346-E8D5A621AE48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07BB2FD6-7AD9-4D72-A346-E8D5A621AE48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{07BB2FD6-7AD9-4D72-A346-E8D5A621AE48} = {E3AE196D-9785-45C6-9846-E236B6D98DBA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4C87338B-33B8-42D3-90BC-DF10C5B3163D}

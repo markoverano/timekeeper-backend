@@ -8,7 +8,7 @@ namespace TimeKeeper.Core.Interface.Services
         Task<AttendanceEntryDto> GetAttendanceByIdAsync(int id);
         Task CreateAttendanceAsync(int employeeId);
         Task UpdateAttendanceAsync(int id, AttendanceEntryDto attendanceDto);
-        Task DeleteAttendanceAsync(int id);
+        Task TimeoutAsync(int employeeId);
         Task<List<AttendanceEntryDto>> GetEntriesByEmployeeIdAsync(int employeeId);
     }
 }

@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TimeKeeper.Core.Entities;
 using static TimeKeeper.Infrastructure.Helpers.Utility;
 
@@ -80,13 +75,15 @@ namespace TimeKeeper.Infrastructure.Data
               new RolePermission { RoleId = 1, PermissionId = 2 }
             );
 
+            var adminUserId = Guid.NewGuid();
+
             PasswordHasher hasher = new PasswordHasher();
             var (hashedPassword, salt) = hasher.HashPassword("admin123");
 
             modelBuilder.Entity<UserDetail>().HasData(
                 new UserDetail
                 {
-                    UserId = Guid.NewGuid(),
+                    UserId = adminUserId,
                     FirstName = "Admin",
                     LastName = "User",
                     Email = "admin@user.com",
@@ -94,6 +91,14 @@ namespace TimeKeeper.Infrastructure.Data
                     RoleId = 1,
                     PasswordHash = hashedPassword,
                     Salt = Convert.ToBase64String(salt)
+                }
+            );
+
+            modelBuilder.Entity<Employee>().HasData(
+                new Employee
+                {
+                    Id = 1,
+                    UserId = adminUserId
                 }
             );
         }

@@ -4,6 +4,6 @@ namespace TimeKeeper.Core.Interface.Services
 {
     public interface IAuthService
     {
-        Task<LoginResponse> Authenticate(string? email, string? password);
+        Task<LoginResponse?> Authenticate(string? email, string? password);
     }
 }

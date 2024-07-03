@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace TimeKeeper.MiddleWares
 {
@@ -25,23 +22,39 @@ namespace TimeKeeper.MiddleWares
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unhandled exception has occurred.");
                 await HandleExceptionAsync(context, ex);
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            _logger.LogError(exception, "An unhandled exception occurred");
 
-            var response = new
+            var response = context.Response;
+            response.ContentType = "application/json";
+
+            var statusCode = (int)HttpStatusCode.InternalServerError;
+            var result = JsonSerializer.Serialize(new { error = "An unexpected error occurred" });
+
+            if (exception is HttpRequestException)
             {
-                message = "An unexpected error occurred. Please try again later.",
-                details = exception.Message
-            };
+                statusCode = (int)HttpStatusCode.BadRequest;
+                result = JsonSerializer.Serialize(new { error = "Bad request" });
+            }
+            else if (exception is UnauthorizedAccessException)
+            {
+                statusCode = (int)HttpStatusCode.Unauthorized;
+                result = JsonSerializer.Serialize(new { error = "Unauthorized" });
+            }
+            else if (exception is NotImplementedException)
+            {
+                statusCode = (int)HttpStatusCode.NotImplemented;
+                result = JsonSerializer.Serialize(new { error = "Not implemented" });
+            }
 
-            return context.Response.WriteAsJsonAsync(response);
+            response.StatusCode = statusCode;
+
+            return response.WriteAsync(result);
         }
     }
 }

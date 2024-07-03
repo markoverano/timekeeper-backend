@@ -27,12 +27,14 @@ namespace TimeKeeper.Infrastructure.Helpers
 
             public string HashPasswordWithSalt(string password, byte[] salt)
             {
-                return Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                     password: password,
                     salt: salt,
                     prf: KeyDerivationPrf.HMACSHA256,
                     iterationCount: 10000,
                     numBytesRequested: 256 / 8));
+
+                return hashed;
             }
         }
     }

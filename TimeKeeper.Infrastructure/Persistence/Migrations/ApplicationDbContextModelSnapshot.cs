@@ -63,6 +63,13 @@ namespace TimeKeeper.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Employees");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            UserId = new Guid("6cd469ae-7654-4e76-a008-c5c262cdd123")
+                        });
                 });
 
             modelBuilder.Entity("TimeKeeper.Core.Entities.Permission", b =>
@@ -161,14 +168,14 @@ namespace TimeKeeper.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("397d7756-2968-4749-9b7f-6f5a111a3ee2"),
+                            UserId = new Guid("6cd469ae-7654-4e76-a008-c5c262cdd123"),
                             Email = "admin@user.com",
                             FirstName = "Admin",
                             LastName = "User",
-                            PasswordHash = "wGcLFFXSv/rJD50G0nNXeBeH20/bUlQUBovRz5yuHoY=",
+                            PasswordHash = "O9Am/GJ39Oje93VgSdi9AinvfD4o7aN+YvSmNSP5I+A=",
                             PhoneNumber = "1234567890",
                             RoleId = 1,
-                            Salt = "61J9h/J4pGDDX5mfHo2Llw=="
+                            Salt = "N2rzdQo97l1o4EiArJapPA=="
                         });
                 });
 

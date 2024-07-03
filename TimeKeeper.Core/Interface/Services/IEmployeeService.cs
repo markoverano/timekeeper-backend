@@ -6,5 +6,6 @@ namespace TimeKeeper.Core.Interface.Services
     {
         Task CreateEmployeeAsync(EmployeeDto employeeDto, string password);
         Task<EmployeeDto> GetEmployeeByIdAsync(int id);
+        Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync();
     }
 }

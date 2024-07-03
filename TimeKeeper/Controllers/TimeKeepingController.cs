@@ -48,8 +48,7 @@ namespace TimeKeeper.Controllers
         public async Task<IActionResult> CreateAttendance(int employeeId)
         {
             await _attendanceService.CreateAttendanceAsync(employeeId);
-            var attendanceDto = await _attendanceService.GetAttendanceByIdAsync(employeeId);
-            return CreatedAtAction(nameof(GetAttendanceById), new { id = attendanceDto.Id }, attendanceDto);
+            return Ok(new { message = "Timein recorded successfully." });
         }
 
         [HttpPut("{id}")]
@@ -59,11 +58,11 @@ namespace TimeKeeper.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAttendance(int id)
+        [HttpPut("timeout")]
+        public async Task<IActionResult> Timeout([FromBody] int employeeId)
         {
-            await _attendanceService.DeleteAttendanceAsync(id);
-            return NoContent();
+            await _attendanceService.TimeoutAsync(employeeId);
+            return Ok(new { message = "Time-out recorded successfully." });
         }
     }
 }

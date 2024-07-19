@@ -44,7 +44,7 @@ namespace TimeKeeper
             services.AddIdentity<UserDetail, IdentityRole>().AddDefaultTokenProviders();
 
             services.AddAutoMapper(typeof(AttendanceMapperProfile));
-
+            services.AddCors();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -96,9 +96,12 @@ namespace TimeKeeper
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TimeKeeper API"));
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireAuthorization();
             });
         }
     }

@@ -54,6 +54,10 @@ namespace TimeKeeper.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAttendance(int id, AttendanceEntryDto attendanceDto)
         {
+            if (!User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
             await _attendanceService.UpdateAttendanceAsync(id, attendanceDto);
             return NoContent();
         }
